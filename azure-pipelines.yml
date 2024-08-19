@@ -6,6 +6,8 @@ pool:
 steps:
 - task: Docker@2
   inputs:
+    containerRegistry: 'kubeacr'
+    repository: 'nodejsimage'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
 - task: HelmInstaller@1
