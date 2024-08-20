@@ -20,6 +20,9 @@ steps:
 - script: mkdir -p /home/vsts/work/1/s/helmado1
   displayName: 'Create helmado1 directory'
 
+- script: git clone https://github.com/collectorias53/helmpipeline /home/vsts/work/1/s/helmado1/
+  displayName: 'Clone Helm chart repository into helmado1'
+
 # List the contents of the helmado1 directory (optional for debugging)
 - script: ls -la /home/vsts/work/1/s/helmado1
   displayName: 'List contents of helmado1 directory'
@@ -33,3 +36,8 @@ steps:
     chartPath: '/home/vsts/work/1/s/helmado1'
     chartNameForACR: 'myapp-chart'
     chartPathForACR: '/home/vsts/work/1/s/helmado1'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
