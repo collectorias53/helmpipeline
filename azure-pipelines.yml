@@ -19,6 +19,6 @@ steps:
     azureResourceGroupForACR: 'rgterra'
     azureContainerRegistry: 'kubeacr1.azurecr.io'
     command: 'package'
-    chartPath: '$(System.DefaultWorkingDirectory)/artf/Charts/helmnj'
+    chartPath: 'helmado1'
     chartNameForACR: 'myapp-chart'
-    chartPathForACR: '$(System.DefaultWorkingDirectory)/artf/Charts/helmnj'
+    chartPathForACR: 'helmado1'
