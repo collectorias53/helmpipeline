@@ -6,7 +6,7 @@ pool:
 steps:
 - task: Docker@2
   inputs:
-    containerRegistry: 'kubeacr'
+    containerRegistry: 'kubeacrsc'
     repository: 'nodejsimage'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
