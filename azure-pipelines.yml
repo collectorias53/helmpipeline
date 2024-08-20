@@ -20,7 +20,7 @@ steps:
 - script: mkdir -p /home/vsts/work/1/s/helmado1
   displayName: 'Create helmado1 directory'
 
-- script: git clone https://github.com/collectorias53/helmpipeline /home/vsts/work/1/s/helmado1/
+- script: git clone https://github.com/collectorias53/helmpipeline/tree/master/helmado /home/vsts/work/1/s/helmado1/
   displayName: 'Clone Helm chart repository into helmado1'
 
 # List the contents of the helmado1 directory (optional for debugging)
