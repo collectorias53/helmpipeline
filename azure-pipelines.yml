@@ -3,6 +3,7 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
+
 steps:
 - task: Docker@2
   inputs:
@@ -10,15 +11,25 @@ steps:
     repository: 'nodejsimage'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
+
 - task: HelmInstaller@1
   inputs:
     helmVersionToInstall: 'latest'
+
+# Create the helmado1 directory
+- script: mkdir -p /home/vsts/work/1/s/helmado1
+  displayName: 'Create helmado1 directory'
+
+# List the contents of the helmado1 directory (optional for debugging)
+- script: ls -la /home/vsts/work/1/s/helmado1
+  displayName: 'List contents of helmado1 directory'
+
 - task: HelmDeploy@1
   inputs:
     azureSubscriptionForACR: 'spconnection'
     azureResourceGroupForACR: 'rgterra'
     azureContainerRegistry: 'kubeacr1.azurecr.io'
     command: 'package'
-    chartPath: 'helmado1'
+    chartPath: '/home/vsts/work/1/s/helmado1'
     chartNameForACR: 'myapp-chart'
-    chartPathForACR: 'helmado1'
+    chartPathForACR: '/home/vsts/work/1/s/helmado1'
