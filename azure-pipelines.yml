@@ -50,4 +50,4 @@ steps:
     namespace: 'helmns'
     command: 'upgrade'
     chartType: 'FilePath'
-    chartPath: '$(Build.ArtifactStagingDirectory)/drop'
+    chartPath: '/home/vsts/work/1/s/helmado1'
