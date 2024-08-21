@@ -59,16 +59,6 @@ stages:
         artifactName: 'drop'
         downloadPath: '$(System.ArtifactsDirectory)'
 
-    # Set up AKS credentials for kubectl and Helm
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'spconnection'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az aks get-credentials --resource-group <your-resource-group> --name <your-aks-cluster>
-      displayName: 'Set up AKS credentials'
-
     # Deploy the Helm chart to the AKS cluster
     - task: HelmDeploy@1
       inputs:
