@@ -4,49 +4,82 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: Docker@2
-  inputs:
-    containerRegistry: 'ACR_ServiceConnection_1'
-    repository: 'nodejsimage'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+stages:
+# Build Stage
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'ACR_ServiceConnection_1'
+        repository: 'nodejsimage'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
 
-- task: HelmInstaller@1
-  inputs:
-    helmVersionToInstall: 'latest'
+    - task: HelmInstaller@1
+      inputs:
+        helmVersionToInstall: 'latest'
 
-# Create the helmado1 directory
-- script: mkdir -p /home/vsts/work/1/s/helmado1
-  displayName: 'Create helmado1 directory'
+    # Create the helmado1 directory
+    - script: mkdir -p /home/vsts/work/1/s/helmado1
+      displayName: 'Create helmado1 directory'
 
-- script: git clone https://github.com/collectorias53/helmpipeline /home/vsts/work/1/s/helmado1/
-  displayName: 'Clone Helm chart repository into helmado1'
+    - script: git clone https://github.com/collectorias53/helmpipeline /home/vsts/work/1/s/helmado1/
+      displayName: 'Clone Helm chart repository into helmado1'
 
-# List the contents of the helmado1 directory (optional for debugging)
-- script: ls -la /home/vsts/work/1/s/helmado1
-  displayName: 'List contents of helmado1 directory'
+    # List the contents of the helmado1 directory (optional for debugging)
+    - script: ls -la /home/vsts/work/1/s/helmado1
+      displayName: 'List contents of helmado1 directory'
 
-- task: HelmDeploy@1
-  inputs:
-    azureSubscriptionForACR: 'spconnection'
-    azureResourceGroupForACR: 'rgterra'
-    azureContainerRegistry: 'kubeacr1.azurecr.io'
-    command: 'package'
-    chartPath: '/home/vsts/work/1/s/helmado1'
-    chartNameForACR: 'myapp-chart'
-    chartPathForACR: '/home/vsts/work/1/s/helmado1'
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-- task: HelmDeploy@1
-  inputs:
-    connectionType: 'Azure Resource Manager'
-    azureSubscription: 'spconnection'
-    azureResourceGroup: 'rgterra'
-    kubernetesCluster: 'akstf'
-    command: 'upgrade'
-    chartType: 'FilePath'
-    chartPath: '/home/vsts/work/1/s/helmado1'
+    - task: HelmDeploy@1
+      inputs:
+        azureSubscriptionForACR: 'spconnection'
+        azureResourceGroupForACR: 'rgterra'
+        azureContainerRegistry: 'kubeacr1.azurecr.io'
+        command: 'package'
+        chartPath: '/home/vsts/work/1/s/helmado1'
+        chartNameForACR: 'myapp-chart'
+        chartPathForACR: '/home/vsts/work/1/s/helmado1'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+# Deploy Stage
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+  - job: DeployJob
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    # Set up AKS credentials for kubectl and Helm
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'spconnection'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az aks get-credentials --resource-group <your-resource-group> --name <your-aks-cluster>
+      displayName: 'Set up AKS credentials'
+
+    # Deploy the Helm chart to the AKS cluster
+    - task: HelmDeploy@1
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscription: 'spconnection'
+        azureResourceGroup: 'rgterra'
+        kubernetesCluster: 'akstf'
+        command: 'upgrade'
+        chartType: 'FilePath'
+        chartPath: '/home/vsts/work/1/s/helmado1'
+        
+    # Optional: Verify the deployment (e.g., check pod status)
+    - script: kubectl get pods -n default
+      displayName: 'Verify deployment'
