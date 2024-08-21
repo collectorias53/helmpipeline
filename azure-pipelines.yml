@@ -49,5 +49,5 @@ steps:
     kubernetesCluster: 'akstf'
     namespace: 'helmns'
     command: 'upgrade'
-    chartType: 'Name'
-    chartName: 'myapp-chart'
+    chartType: 'FilePath'
+    chartPath: '$(Build.ArtifactStagingDirectory)/drop'
