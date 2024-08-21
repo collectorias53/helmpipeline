@@ -68,7 +68,7 @@ stages:
         kubernetesCluster: 'akstf'
         command: 'upgrade'
         chartType: 'FilePath'
-        chartPath: '/home/vsts/work/1/s/helmado1'
+        chartPath: '$(System.ArtifactsDirectory)/drop/nodesampleapi-0.1.0.tgz'
         
     # Optional: Verify the deployment (e.g., check pod status)
     - script: kubectl get pods -n default
