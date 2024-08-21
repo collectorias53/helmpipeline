@@ -68,5 +68,5 @@ stages:
         kubernetesCluster: 'akstf'
         command: 'upgrade'
         chartType: 'FilePath'
-        chartPath: 'home/vsts/work/1/a/drop/nodesampleapi-0.1.0.tgz'
+        chartPath: '$(System.ArtifactsDirectory)/drop/nodesampleapi-0.1.0.tgz'
 
