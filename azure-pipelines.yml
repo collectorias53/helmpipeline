@@ -47,7 +47,6 @@ steps:
     azureSubscription: 'spconnection'
     azureResourceGroup: 'rgterra'
     kubernetesCluster: 'akstf'
-    namespace: 'helmns'
     command: 'upgrade'
     chartType: 'FilePath'
     chartPath: '/home/vsts/work/1/s/helmado1'
