@@ -67,5 +67,6 @@ stages:
         azureResourceGroup: 'rgterra'
         kubernetesCluster: 'akstf'
         command: 'upgrade'
-        chartType: 'Name'
-        chartName: 'myapp-chart'
+        chartType: 'FilePath'
+        chartPath: '$(System.ArtifactsDirectory)/drop/nodesampleapi-0.1.0.tgz'
+
