@@ -41,3 +41,13 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+- task: HelmDeploy@1
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscription: 'spconnection'
+    azureResourceGroup: 'rgterra'
+    kubernetesCluster: 'akstf'
+    namespace: 'helmns'
+    command: 'upgrade'
+    chartType: 'Name'
+    chartName: 'myapp-chart'
